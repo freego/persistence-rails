@@ -1,12 +1,14 @@
-# Persistence::Rails
+# persistence-rails
 
-Rails integration for Persistence.js
+## Rails integration for Persistence.js
+
+The gem adds @zefhemel's [Persistence.js](http://persistencejs.org/) to your rails project.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'persistencejs-rails'
+    gem 'persistence-rails'
 
 And then execute:
 
@@ -14,7 +16,12 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install persistencejs-rails
+    $ gem install persistence-rails
+
+You can also run the generator to add Persistence.js to your application.js automatically.
+By default it only allows access to a selection of Persistence.js modules, if you want to load all of them use
+
+    //= require persistence.all
 
 ## Usage
 

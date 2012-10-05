@@ -1,6 +1,6 @@
-require "persistencejs-rails/version"
+require "persistence-rails/version"
 
-module Persistencejs
+module Persistence
   module Rails
     # Your code goes here...
   end
