@@ -2,7 +2,7 @@
 
 ## Rails integration for Persistence.js
 
-The gem adds @zefhemel's [Persistence.js](http://persistencejs.org/) to your rails project.
+The gem adds @zefhemel's [Persistence.js](http://persistencejs.org/) to your Rails project.
 
 ## Installation
 
