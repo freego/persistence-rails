@@ -1,4 +1,4 @@
-require "persistence-rails/version"
+require "persistence/rails/version"
 
 module Persistence
   module Rails
