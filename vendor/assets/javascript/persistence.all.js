@@ -1,0 +1,16 @@
+//= require persistence/persistence.core
+//= require persistence/persistence.store.config
+//= require persistence/persistence.store.memory
+//= require persistence/persistence.store.mysql
+//= require persistence/persistence.store.sql
+//= require persistence/persistence.store.sqlite
+//= require persistence/persistence.store.sqlite3
+//= require persistence/persistence.store.titanium
+//= require persistence/persistence.store.websql
+//= require persistence/persistence.store.appengine
+//= require persistence/persistence.sync
+//= require persistence/persistence.jquery
+//= require persistence/persistence.jquery.mobile
+//= require persistence/persistence.migrations
+//= require persistence/persistence.pool
+//= require persistence/persistence.search
