@@ -14,18 +14,15 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install persistence-rails
+## Usage
 
 You can also run the generator to add Persistence.js to your application.js automatically.
+
+    rails g bootstrap:install
+
 By default it only allows access to a selection of Persistence.js modules, if you want to load all of them use
 
     //= require persistence.all
-
-## Usage
-
-TODO: Write usage instructions here
 
 ## Contributing
 
