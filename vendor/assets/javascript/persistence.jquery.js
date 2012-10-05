@@ -1,4 +1,4 @@
-//= require persistence
+//= require persistence.core
 
 /**
  * Copyright (c) 2010 Roberto Saccon <rsaccon@gmail.com>

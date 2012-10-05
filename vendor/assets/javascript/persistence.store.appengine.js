@@ -1,4 +1,4 @@
-//= require persistence
+//= require persistence.core
 
 var jdatastore = Packages.com.google.appengine.api.datastore,
     JDatastoreServiceFactory = jdatastore.DatastoreServiceFactory,

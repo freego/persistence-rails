@@ -1,4 +1,4 @@
-//= require persistence
+//= require persistence.core
 
 try {
   if(!window) {

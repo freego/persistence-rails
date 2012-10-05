@@ -1,17 +1,14 @@
-//= require persistence
+//= require persistence.core
 
 /**
- * This back-end depends on the node.js asynchronous SQLite3 driver as found on:
- * https://github.com/developmentseed/node-sqlite3
+ * This back-end depends on the node.js asynchronous MySQL driver as found on:
+ * http://github.com/felixge/node-mysql/
  * Easy install using npm:
- *   npm install sqlite3
- * @author Eugene Ware
- * @author Jeff Kunkle
- * @author Joe Ferner
+ *   npm install mysql
  */
 var sys = require('sys');
 var sql = require('./persistence.store.sql');
-var sqlite = require('sqlite3');
+var mysql = require('mysql');
 
 var db, username, password;
 
@@ -20,11 +17,16 @@ function log(o) {
 }
 
 
-exports.config = function(persistence, dbPath) {
+exports.config = function(persistence, hostname, port, db, username, password) {
   exports.getSession = function(cb) {
     var that = {};
-    cb = cb || function() { };
-    var conn = new sqlite.Database(dbPath, cb);
+    var client = mysql.createClient({
+			host: hostname,
+			port: port,
+			database: db,
+			user: username,
+			password: password
+		});
 
     var session = new persistence.Session(that);
     session.transaction = function (explicitCommit, fn) {
@@ -32,7 +34,7 @@ exports.config = function(persistence, dbPath) {
         fn = arguments[0];
         explicitCommit = false;
       }
-      var tx = transaction(conn);
+      var tx = transaction(client);
       if (explicitCommit) {
         tx.executeSql("START TRANSACTION", null, function(){
           fn(tx)
@@ -42,16 +44,19 @@ exports.config = function(persistence, dbPath) {
         fn(tx);
     };
 
-    session.close = function(cb) {
-      cb = cb || function() {};
-      conn.close(cb);
+    session.close = function() {
+      client.end();
+      //conn._connection.destroy();
     };
+    session.client = client;
     return session;
   };
 
   function transaction(conn){
     var that = {};
-    // TODO: add check for db opened or closed
+    if(conn.ending) {
+      throw new Error("Connection has been closed, cannot execute query.");
+    }
     that.executeSql = function(query, args, successFn, errorFn){
       function cb(err, result){
         if (err) {
@@ -69,31 +74,29 @@ exports.config = function(persistence, dbPath) {
         args && args.length > 0 && sys.print(args.join(",") + "\n")
       }
       if (!args) {
-        conn.all(query, cb);
+        conn.query(query, cb);
       }
       else {
-        conn.all(query, args, cb);
+        conn.query(query, args, cb);
       }
     }
-
+    
     that.commit = function(session, callback){
       session.flush(that, function(){
         that.executeSql("COMMIT", null, callback);
       })
     }
-
+    
     that.rollback = function(session, callback){
       that.executeSql("ROLLBACK", null, function() {
         session.clean();
-        callback();
+        callback && callback();
       });
     }
     return that;
   }
-
-  ///////////////////////// SQLite dialect
-
-  persistence.sqliteDialect = {
+  
+  exports.mysqlDialect = {
     // columns is an array of arrays, e.g.
     // [["id", "VARCHAR(32)", "PRIMARY KEY"], ["name", "TEXT"]]
     createTable: function(tableName, columns) {
@@ -105,7 +108,7 @@ exports.config = function(persistence, dbPath) {
         defs.push("`" + column[0] + "` " + tm.columnType(column[1]) + (column[2] ? " " + column[2] : ""));
       }
       sql += defs.join(", ");
-      sql += ')';
+      sql += ') ENGINE=InnoDB DEFAULT CHARSET=utf8';
       return sql;
     },
 
@@ -113,12 +116,12 @@ exports.config = function(persistence, dbPath) {
     // ["id"]
     createIndex: function(tableName, columns, options) {
       options = options || {};
-      return "CREATE "+(options.unique?"UNIQUE ":"")+"INDEX IF NOT EXISTS `" + tableName + "__" + columns.join("_") + 
+      return "CREATE "+(options.unique?"UNIQUE ":"")+"INDEX `" + tableName + "__" + columns.join("_") + 
              "` ON `" + tableName + "` (" + 
              columns.map(function(col) { return "`" + col + "`"; }).join(", ") + ")";
     }
   };
 
-  sql.config(persistence, persistence.sqliteDialect);
+  sql.config(persistence, exports.mysqlDialect);
 };
 

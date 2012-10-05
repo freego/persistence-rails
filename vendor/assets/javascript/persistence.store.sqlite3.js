@@ -1,15 +1,17 @@
-//= require persistence
+//= require persistence.core
 
 /**
- * This back-end depends on the node.js asynchronous SQLite driver as found on:
- * https://github.com/orlandov/node-sqlite
+ * This back-end depends on the node.js asynchronous SQLite3 driver as found on:
+ * https://github.com/developmentseed/node-sqlite3
  * Easy install using npm:
- *   npm install sqlite
+ *   npm install sqlite3
  * @author Eugene Ware
+ * @author Jeff Kunkle
+ * @author Joe Ferner
  */
 var sys = require('sys');
 var sql = require('./persistence.store.sql');
-var sqlite = require('sqlite');
+var sqlite = require('sqlite3');
 
 var db, username, password;
 
@@ -22,8 +24,7 @@ exports.config = function(persistence, dbPath) {
   exports.getSession = function(cb) {
     var that = {};
     cb = cb || function() { };
-    var conn = new sqlite.Database();
-    conn.open(dbPath, cb);
+    var conn = new sqlite.Database(dbPath, cb);
 
     var session = new persistence.Session(that);
     session.transaction = function (explicitCommit, fn) {
@@ -68,19 +69,19 @@ exports.config = function(persistence, dbPath) {
         args && args.length > 0 && sys.print(args.join(",") + "\n")
       }
       if (!args) {
-        conn.execute(query, cb);
+        conn.all(query, cb);
       }
       else {
-        conn.execute(query, args, cb);
+        conn.all(query, args, cb);
       }
     }
-    
+
     that.commit = function(session, callback){
       session.flush(that, function(){
         that.executeSql("COMMIT", null, callback);
       })
     }
-    
+
     that.rollback = function(session, callback){
       that.executeSql("ROLLBACK", null, function() {
         session.clean();
@@ -89,7 +90,7 @@ exports.config = function(persistence, dbPath) {
     }
     return that;
   }
-  
+
   ///////////////////////// SQLite dialect
 
   persistence.sqliteDialect = {

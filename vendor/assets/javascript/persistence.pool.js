@@ -1,4 +1,4 @@
-//= require persistence
+//= require persistence.core
 
 var sys = require('sys');
 var mysql = require('mysql');

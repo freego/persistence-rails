@@ -1,4 +1,4 @@
-//= require persistence
+//= require persistence.core
 
 /**
  * Default type mapper. Override to support more types or type options.

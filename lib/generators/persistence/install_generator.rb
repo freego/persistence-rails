@@ -10,7 +10,7 @@ module Persistence
       def add_assets
 
         if File.exist?('app/assets/javascripts/application.js')
-          insert_into_file "app/assets/javascripts/application.js", "//= require persistence\n"
+          insert_into_file "app/assets/javascripts/application.js", "//= require persistence\n", :after => "jquery_ujs\n"
         else
           copy_file "application.js", "app/assets/javascripts/application.js"
         end

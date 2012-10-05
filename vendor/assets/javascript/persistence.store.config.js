@@ -1,4 +1,4 @@
-//= require persistence
+//= require persistence.core
 
 exports.init = function(persistence, config) {
   var persistenceStore;
