@@ -31,3 +31,6 @@ By default it only allows access to a selection of Persistence.js modules, if yo
 3. Commit your changes (`git commit -am 'Added some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+
+Copyright (c) 2013 freego http://freegoweb.it
